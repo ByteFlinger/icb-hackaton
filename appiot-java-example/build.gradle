@@ -1,0 +1,49 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE")
+    }
+    
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+//group = 'brolle75'
+//version = '0.1'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://sensation-repo.cloudapp.net:8081/nexus/content/repositories/releases"
+    }
+    
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'se.sigma.sensation:client-sdk:0.8.9'
+}
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
+}
+/**
+task buildDocker(type: Docker, dependsOn: build) {
+  push = true
+  applicationName = "adsb-flight-service"
+  dockerfile = file('Dockerfile')
+  doFirst {
+    copy {
+      from jar
+      into stageDir
+    }
+  }
+}
+**/

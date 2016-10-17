@@ -28,6 +28,8 @@ repositories {
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'se.sigma.sensation:client-sdk:0.8.9'
+    compile 'se.sigma.sensation:event-sdk:0.8.2'
+    
 }
 
 

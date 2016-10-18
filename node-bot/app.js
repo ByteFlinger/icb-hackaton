@@ -85,28 +85,24 @@ intents.matches("info_available_rooms", [
             let floor;
             let type;
             if (siteEntity) {
-                site = siteEntity.entity;
+                session.userData.site = siteEntity.entity;
             }
 
             if (floorEntity) {
-                floor = floorEntity.entity;
+                session.userData.floor = floorEntity.entity;
             }
 
             if (roomTypeEntity) {
-                type = roomTypeEntity.entity;
+                session.userData.rtype = roomTypeEntity.entity;
             }
 
             if (!site && !floor && !type) {
-                builder.Prompts.text(session, "Which site are you situated at (e.g lindholmen)?");
+                builder.Prompts.choice(session, "Care to specify where you want to book the room? It's not like I can guess you know.", ["Lindholmen (SE)", "Borås (SE)", "Copenhagen (DK)"]);
             } else {
                 // Query for room
-                console.log(`Would have queried for room in ${site}, floor $${floor} and type ${type}`);
-                next({
-                    response: `Would have queried for room in ${site}, floor $${floor} and type ${type}`
-                });
+                console.log(`Would have queried for room in ${session.userData.site}, floor $${session.userData.floor} and type ${session.userData.rtype}`);
+                session.endDialog(`Would have queried for room in ${session.userData.site}, floor $${session.userData.floor} and type ${session.userData.rtype} but people can be bothered to teach poor old marvin`);
             }
-
-
         }
         // if (!site) {
         //     builder.Prompts.text(session, "Which site?");
@@ -117,14 +113,16 @@ intents.matches("info_available_rooms", [
         // }
     },
     function(session, results) {
+        session.userData.site = results.response.entity;
         if (results.response) {
             // ... save task
-            session.send("Ok... I should have booked a room but I don't know how to do that yet '%s'.", results.response);
+            session.endDialog(`Would have queried for room in ${session.userData.site}, floor $${session.userData.floor} and type ${session.userData.rtype} but people can be bothered to teach poor old marvin`);
+            // session.send("Ok... I should have booked a room but I don't know how to do that yet '%s'.", results.response);
         } else {
-            session.send("Ok");
+            session.endDialog("Sure, whatever");
         }
     }
 ]);
 
 
-intents.onDefault(builder.DialogAction.send("I'm sorry I didn't understand. Repeat your question."));
+intents.onDefault(builder.DialogAction.send("Sorry, I have no idea what you are saying"));

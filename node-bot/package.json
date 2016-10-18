@@ -15,8 +15,8 @@
   "description": "A simple bot boilerplate to get started from",
   "dependencies": {
     "botbuilder": "^3.3.1",
-    "express": "^4.14.0",
-    "forever": "^0.15.2"
+    "forever": "^0.15.2",
+    "restify": "^4.1.1"
   },
   "devDependencies": {
     "gulp": "^3.9.1"

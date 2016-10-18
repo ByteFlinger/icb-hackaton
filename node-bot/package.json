@@ -1,0 +1,24 @@
+{
+  "name": "time-o-tron",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prod": "./node_modules/.bin/forever bin/www",
+    "deploy": "./node_modules/.bin/gulp deploy --host bots"
+  },
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ByteFlinger/icb-hackaton.git"
+  },
+  "description": "A simple bot boilerplate to get started from",
+  "dependencies": {
+    "botbuilder": "^3.3.1",
+    "express": "^4.14.0",
+    "forever": "^0.15.2"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
+}

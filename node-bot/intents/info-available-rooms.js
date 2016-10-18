@@ -2,7 +2,6 @@
 
 const dataHandler = require('../data-handler');
 const async = require('async');
-let levenshtein = require('fast-levenshtein');
 
 module.exports = (intent, builder) => {
 
@@ -25,19 +24,6 @@ module.exports = (intent, builder) => {
                                 console.log("Checking for actual site");
                                 console.log("Got asked for " + siteEntity.entity);
                                 let actualSite = dataHandler.findClosestMatch(siteEntity.entity, sites);
-                                // let actualSite;
-                                // let levDistance = 999999;
-                                // console.log(sites);
-                                // for (var i = 0; i < sites.length; i++) {
-                                //     console.log("Loop " + i);
-                                //     let distance = levenshtein.get(siteEntity.entity, sites[i]);
-                                //     console.log("Distance between " + siteEntity.entity + " - " + sites[i] + " = " + distance);
-                                //     if (distance < levDistance) {
-                                //         actualSite = sites[i];
-                                //         levDistance = distance;
-                                //     }
-                                // }
-                                // console.log("Got back " + actualSite);
                                 if (actualSite) {
                                     session.userData.site = actualSite;
                                 }

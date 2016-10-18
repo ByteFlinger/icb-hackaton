@@ -1,7 +1,7 @@
 'use strict';
 
 const request = require('request');
-let levenshtein = require('fast-levenshtein');
+const levenshtein = require('fast-levenshtein');
 
 /**
  * returns an array of room names

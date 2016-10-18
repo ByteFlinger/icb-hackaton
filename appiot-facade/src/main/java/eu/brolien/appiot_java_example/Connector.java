@@ -57,6 +57,7 @@ public class Connector implements ApplicationContextAware {
             locationManager = clientApi.getLocationManager();
             locationManager.setDeviceNetworkId(props.getProperty(ApplicationProperties.KEY_DEVICE_NETWORK_ID));
             sensorCollectionManager = clientApi.getSensorCollectionManager();
+            
             log.info("resource manager base address: " + resourceManager.getManagerBaseAddress());
             log.info("location manager base address: " + locationManager.getManagerBaseAddress());
             

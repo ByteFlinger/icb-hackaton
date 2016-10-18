@@ -37,28 +37,34 @@ public class EventService implements ApplicationContextAware, EventMessageListen
     
     private Executor exec = Executors.newSingleThreadExecutor();
     
+    
     private void setup(String json) {
-        System.out.println(json);
-        System.out.println("!!! SETUP !!!!");
-        IntegrationTicket integrationTicket = new Gson().fromJson(json, IntegrationTicket.class);
-        System.out.println(integrationTicket);
-        eventManager = new EventManager(integrationTicket);
-        eventManager.setEventMessageListener(this);
-        eventManager.startInbox();
+        //System.out.println(json);
+        //System.out.println("!!! SETUP !!!!");
+        //IntegrationTicket integrationTicket = new Gson().fromJson(json, IntegrationTicket.class);
+        //System.out.println(integrationTicket);
+        //eventManager = new EventManager(integrationTicket);
+        //eventManager.setEventMessageListener(this);
+        //eventManager.startInbox();
 
-        System.out.println("!!! LISTENING !!!!!");
+        //System.out.println("!!! LISTENING !!!!!");
+    }
+    
+    public void onEventMessage(EventMessage eventMessage) {
+        onEventMessage(eventMessage, 0);
     }
 
-    public void onEventMessage(EventMessage eventMessage) {
+    public void onEventMessage(EventMessage eventMessage, int severityLevel) {
         exec.execute(new Runnable() {
             @Override
             public void run() {
-                processMessage(eventMessage);
+                processMessage(eventMessage, severityLevel);
             }            
         });
     }
     
-    private void processMessage(EventMessage eventMessage) {
+    
+    private void processMessage(EventMessage eventMessage, int severityLevel) {
         
         try {
 
@@ -73,13 +79,14 @@ public class EventService implements ApplicationContextAware, EventMessageListen
             String sensor = eventMessage.sensorName;
             String event = eventMessage.id;
             String rule = eventMessage.ruleName;
+            //String severity = eventMessage.
 
             String value = "";
             if (eventMessage.measurement != null && eventMessage.measurement.getValues().length > 0) {
                 value = Double.toString(eventMessage.measurement.getValues()[0]);
             }
 
-            jiraPublisher.publish(category, location, trigger, status, sensor, event, rule, value);
+            jiraPublisher.publish(category, location, trigger, status, sensor, event, rule, value, severityLevel);
         } catch (Throwable e) {
             e.printStackTrace();
         }

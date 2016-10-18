@@ -35,7 +35,11 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile("org.springframework.boot:spring-boot-starter-security")
     compile 'se.sigma.sensation:client-sdk:0.8.9'
+    compile 'se.sigma.sensation:event-sdk:0.8.2'
     compile 'com.atlassian.jira:jira-rest-java-client-api:4.0.0'
+    compile 'com.atlassian.jira:jira-rest-java-client-core:4.0.0'
+    compile "com.atlassian.fugue:fugue:2.2.1"
+    
 }
 
 

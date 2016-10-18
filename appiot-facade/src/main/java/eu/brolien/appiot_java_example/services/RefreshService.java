@@ -1,6 +1,8 @@
 package eu.brolien.appiot_java_example.services;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +24,20 @@ public class RefreshService {
     @Autowired
     private RoomCache roomCache;
     
+    public RefreshService() {
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            try {
+                refresh();
+            } catch (SensationException | IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        },1, 1, TimeUnit.MINUTES);        
+    }
     
     
     @RequestMapping(method=RequestMethod.POST)
     public @ResponseBody void refresh() throws ClientProtocolException, SensationException, IOException {
-        //printerCache.refresh();
         roomCache.refresh();
     }
     

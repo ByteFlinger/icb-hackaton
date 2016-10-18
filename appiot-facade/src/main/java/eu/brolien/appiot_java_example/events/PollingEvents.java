@@ -54,7 +54,7 @@ public class PollingEvents implements ApplicationContextAware {
             if (response.hasBody()) {
                 processMessage(response.getBody());
             } else {
-                System.out.println("nothing here");
+                //System.out.println("nothing here");
             }
         } catch (Exception e) {
             e.printStackTrace();

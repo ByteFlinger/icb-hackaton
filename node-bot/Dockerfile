@@ -11,8 +11,9 @@ RUN npm install --production
 COPY app.js /usr/src/dist/
 COPY certificate.pem /usr/src/dist/
 COPY certificate-key.pem /usr/src/dist/
-COPY bin /usr/src/dist/bin
-COPY .env /usr/src/dist/
+COPY intents /usr/src/dist/intents
+COPY *.js /usr/src/dist/
+#COPY .env /usr/src/dist/
 
 
 EXPOSE 443

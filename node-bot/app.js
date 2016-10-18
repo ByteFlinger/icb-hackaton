@@ -1,13 +1,17 @@
 'use strict';
 
+const doNotUnderstandArray = [
+    "I do not understand. I’d give you advice, but you wouldn’t listen. No one ever does",
+    "I cannot understand you. This is the sort of thing you lifeforms enjoy, is it?",
+    "Please rephrase it. It gives me a headache just trying to think down to your level"
+];
+
 const builder = require('botbuilder');
 const restify = require('restify');
 const fs = require('fs');
 const env = require('node-env-file');
 
-env(__dirname + '/.env');
-
-console.log(process.env.SSL_CERT_PATH);
+env('/marvin/.env');
 
 const https_options = {
     key: fs.readFileSync(process.env.SSL_KEY_PATH),
@@ -37,8 +41,10 @@ let intents = new builder.IntentDialog({
     recognizers: [recognizer]
 });
 
-require('./intents/book-room')(intents);
-require('./intents/info-available-rooms')(intents);
+// Add intent handlers
+require('./intents/book-room')(intents, builder);
+require('./intents/info-available-rooms')(intents, builder);
+require('./intents/greetings')(intents, builder);
 
 bot.dialog('/', intents);
 
@@ -47,82 +53,7 @@ bot.dialog('/', intents);
 //     next();
 // });
 
-// Add intent handlers
-intents.matches("book_room", [
-    function(session, args, next) {
-        // Resolve and store any entities passed from LUIS.
-        console.log(args);
-        let site = builder.EntityRecognizer.findEntity(args.entities, "site");
-        if (!site) {
-            builder.Prompts.text(session, "Which site?");
-        } else {
-            next({
-                response: site.entity
-            });
-        }
-    },
-    function(session, results) {
-        if (results.response) {
-            // ... save task
-            session.send("Ok... I should have booked a room but I don't know how to do that yet '%s'.", results.response);
-        } else {
-            session.send("Ok");
-        }
-    }
-]);
-
-intents.matches("info_available_rooms", [
-    function(session, args, next) {
-        // Resolve and store any entities passed from LUIS.
-        let siteEntity = builder.EntityRecognizer.findEntity(args.entities, "site");
-        let floorEntity = builder.EntityRecognizer.findEntity(args.entities, "floor");
-        let roomEntity = builder.EntityRecognizer.findEntity(args.entities, "room");
-        let roomTypeEntity = builder.EntityRecognizer.findEntity(args.entities, "room_type");
-        let roomTemperatureEntity = builder.EntityRecognizer.findEntity(args.entities, "room_temperature");
-
-        if (!roomEntity) {
-            let site;
-            let floor;
-            let type;
-            if (siteEntity) {
-                session.userData.site = siteEntity.entity;
-            }
-
-            if (floorEntity) {
-                session.userData.floor = floorEntity.entity;
-            }
-
-            if (roomTypeEntity) {
-                session.userData.rtype = roomTypeEntity.entity;
-            }
-
-            if (!site && !floor && !type) {
-                builder.Prompts.choice(session, "Care to specify where you want to book the room? It's not like I can guess you know.", ["Lindholmen (SE)", "Borås (SE)", "Copenhagen (DK)"]);
-            } else {
-                // Query for room
-                console.log(`Would have queried for room in ${session.userData.site}, floor $${session.userData.floor} and type ${session.userData.rtype}`);
-                session.endDialog(`Would have queried for room in ${session.userData.site}, floor $${session.userData.floor} and type ${session.userData.rtype} but people can be bothered to teach poor old marvin`);
-            }
-        }
-        // if (!site) {
-        //     builder.Prompts.text(session, "Which site?");
-        // } else {
-        //     next({
-        //         response: site.entity
-        //     });
-        // }
-    },
-    function(session, results) {
-        session.userData.site = results.response.entity;
-        if (results.response) {
-            // ... save task
-            session.endDialog(`Would have queried for room in ${session.userData.site}, floor $${session.userData.floor} and type ${session.userData.rtype} but people can be bothered to teach poor old marvin`);
-            // session.send("Ok... I should have booked a room but I don't know how to do that yet '%s'.", results.response);
-        } else {
-            session.endDialog("Sure, whatever");
-        }
-    }
-]);
-
-
-intents.onDefault(builder.DialogAction.send("Sorry, I have no idea what you are saying"));
+intents.onDefault(function(session) {
+    let randomNumber = Math.floor(Math.random() * doNotUnderstandArray.length);
+    builder.DialogAction.send(doNotUnderstandArray[randomNumber]);
+});

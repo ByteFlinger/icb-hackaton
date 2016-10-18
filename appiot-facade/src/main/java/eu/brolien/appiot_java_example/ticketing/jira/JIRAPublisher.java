@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -24,16 +27,9 @@ import com.atlassian.util.concurrent.Promise;
 import se.sigma.sensation.event.sdk.dto.EventStatus;
 
 @Service
-public class JIRAPublisher {
+public class JIRAPublisher implements ApplicationContextAware {
 
-    final JiraRestClient restClient;
-
-    public JIRAPublisher() {
-        final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
-        URI uri = URI.create("https://ericssonconnectedoffice.atlassian.net");
-        restClient = factory.createWithBasicHttpAuthentication(uri, "carl-martin.glos@ericsson.com", "Wick3dFast!");
-
-    }
+    private JiraRestClient restClient;
 
     public void publish(String category, String location, String trigger, EventStatus status, String sensor,
             String event, String rule, String value) {
@@ -82,6 +78,13 @@ public class JIRAPublisher {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
+        URI uri = URI.create("https://ericssonconnectedoffice.atlassian.net");
+        restClient = factory.createWithBasicHttpAuthentication(uri, applicationContext.getEnvironment().getProperty("jira.user"), applicationContext.getEnvironment().getProperty("jira.password"));
     }
 
 }

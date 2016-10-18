@@ -44,7 +44,7 @@ public class PrinterCache {
             while (iter.hasNext()) {
                 SensorCollectionResponse resp = iter.next();
                 
-                System.out.println(resp.getId());
+                //System.out.println(resp.getId());
 
                 String json = connector.getSensorCollectionManager().getById(resp.getId());
 

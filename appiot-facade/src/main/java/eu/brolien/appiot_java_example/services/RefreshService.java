@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.brolien.appiot_java_example.cache.PrinterCache;
+import eu.brolien.appiot_java_example.cache.RoomCache;
 import se.sigma.sensation.client.sdk.SensationException;
 
 @Controller
@@ -18,12 +19,15 @@ public class RefreshService {
 
     @Autowired
     private PrinterCache printerCache;
+    @Autowired
+    private RoomCache roomCache;
     
     
     
     @RequestMapping(method=RequestMethod.POST)
     public @ResponseBody void refresh() throws ClientProtocolException, SensationException, IOException {
-        printerCache.refresh();
+        //printerCache.refresh();
+        roomCache.refresh();
     }
     
 }

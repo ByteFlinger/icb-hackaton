@@ -24,6 +24,10 @@ repositories {
     maven {
         url "http://sensation-repo.cloudapp.net:8081/nexus/content/repositories/releases"
     }
+    maven {
+       url "https://maven.atlassian.com/content/repositories/atlassian-public/"
+    
+    }
     
 }
 
@@ -31,6 +35,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile("org.springframework.boot:spring-boot-starter-security")
     compile 'se.sigma.sensation:client-sdk:0.8.9'
+    compile 'com.atlassian.jira:jira-rest-java-client-api:4.0.0'
 }
 
 

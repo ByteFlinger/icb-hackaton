@@ -1,27 +1,22 @@
 'use strict';
 
-module.exports = (intent) => {
+module.exports = (intent, builder) => {
 
   intent.matches("book_room", [
     function(session, args, next) {
         // Resolve and store any entities passed from LUIS.
         console.log(args);
-        let site = builder.EntityRecognizer.findEntity(args.entities, "site");
-        if (!site) {
-            builder.Prompts.text(session, "Which site?");
+        let roomEntity = builder.EntityRecognizer.findEntity(args.entities, "room");
+        if (!roomEntity) {
+            builder.Prompts.text(session, "You need to specify a room. I hope you get a cold one.");
         } else {
-            next({
-                response: site.entity
-            });
+            next({ response: roomEntity.entity });
         }
     },
     function(session, results) {
-        if (results.response) {
-            // ... save task
-            session.send("Ok... I should have booked a room but I don't know how to do that yet '%s'.", results.response);
-        } else {
-            session.send("Ok");
-        }
+        let room = results.response;
+        session.send(`I would have booked ${room} but they still don't trust me with it. Humans are so stupid`);
+        session.endDialog();
     }
 ]);
 

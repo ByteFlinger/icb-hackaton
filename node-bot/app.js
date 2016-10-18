@@ -37,6 +37,9 @@ let intents = new builder.IntentDialog({
     recognizers: [recognizer]
 });
 
+require('./intents/book-room')(intents);
+require('./intents/info-available-rooms')(intents);
+
 bot.dialog('/', intents);
 
 // intents.onBegin(function (session, args, next) {

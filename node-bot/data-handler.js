@@ -107,6 +107,23 @@ exports.getSiteFloorList = (site) => {
     });
 };
 
+exports.getRoomNames = (site) => {
+    return new Promise(function(resolve, reject) {
+        request.get('http://52.57.171.54:8080/rooms', (error, response) => {
+            if (!error && response.statusCode === 200) {
+                let data = JSON.parse(response.body);
+                let results = [];
+                data.forEach((room) => {
+                    if (!results.includes(room.name)) results.push(room.name);
+                });
+                resolve(results);
+            } else {
+                console.log('GET request failed', error);
+                reject(error);
+            }
+        }).auth('user', 'hackathon', false);
+    });
+};
 
 /**
  * returns an array containing the sites

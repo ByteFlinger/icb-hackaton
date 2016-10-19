@@ -164,7 +164,7 @@ module.exports = (intent, builder) => {
             dataHandler.getAvailableRooms(filter).then(function(rooms) {
                 if (rooms !== undefined && rooms.length > 0) {
                     let room = rooms[0];
-                    session.endDialog(`There are rooms available\n\n**Site**: ${room.site}\n\n**Floor**: ${room.floor}\n\n**Name**: ${room.name}\n\nI hope the lights don't work`);
+                    session.endDialog(`There are rooms available\n\n**Site**: ${room.site}\n\n**Floor**: ${room.floor}\n\n**Name**: ${room.name}\n\n**Temperature**: ${room.actualTemp}\n\nI hope the lights don't work`);
                 } else {
                     session.endDialog(`There are no rooms available for the following.\n\n${notFoundStr}I can look in the next town but you won't like it`);
                 }

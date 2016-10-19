@@ -77,7 +77,7 @@ module.exports = (intent, builder) => {
 
     intent.matches("info_available_rooms", [
         function(session, args, next) {
-            // For demo purposes we wipe userdata
+            // Do not store user data for now until we have a proper flow in place
             session.userData.site = undefined;
             session.userData.roomType = undefined;
             session.userData.floor = undefined;
@@ -164,7 +164,63 @@ module.exports = (intent, builder) => {
             dataHandler.getAvailableRooms(filter).then(function(rooms) {
                 if (rooms !== undefined && rooms.length > 0) {
                     let room = rooms[0];
-                    session.endDialog(`There are rooms available\n\n**Site**: ${room.site}\n\n**Floor**: ${room.floor}\n\n**Name**: ${room.name}\n\n**Temperature**: ${room.actualTemp}\n\nI hope the lights don't work`);
+                    console.log(rooms);
+                    console.log(room);
+                    let color, text, actions;
+                    if(room.booking) {
+                      color = "warning";
+                      text = "Booked but empty at the moment";
+                      actions = [{
+                              "name": "another",
+                              "text": "Find another",
+                              "type": "button",
+                              "value": "another"
+                          }];
+                    } else {
+                      color = "good";
+                      text = "Not booked";
+                      actions = [{
+                              "name": "another",
+                              "text": "Find another",
+                              "type": "button",
+                              "value": "another"
+                          }, {
+                              "name": "book",
+                              "text": "Book it!",
+                              "type": "button",
+                              "value": "bookit"
+                          }];
+                    }
+
+                    let slackMsg = new builder.Message(session)
+                        .sourceEvent({
+                            slack: {
+                                "text": "Room availability",
+                                "attachments": [{
+                                    "fallback": `Found a room for you\nSite: ${room.site}\nFloor: ${room.floor}\nName: ${room.name}\nTemperature: ${room.actualTemp}\n\nI hope the lights don't work`,
+                                    "color": `${color}`,
+                                    "title": `${room.name}`,
+                                    "callback_id": `${room.name}`,
+                                    "text": `${text}`,
+                                    "fields": [{
+                                        "title": "Site",
+                                        "value": `${room.site}`,
+                                        "short": true
+                                    }, {
+                                        "title": "Floor",
+                                        "value": `${room.floor}`,
+                                        "short": true
+                                    }, {
+                                        "title": "Temperature",
+                                        "value": `${room.actualTemp} ℃`,
+                                        "short": true
+                                    }],
+                                    // "actions": actions
+                                }]
+                            }
+                        });
+                    session.endDialog(slackMsg);
+                    // session.endDialog(`There are rooms available\n\n**Site**: ${room.site}\n\n**Floor**: ${room.floor}\n\n**Name**: ${room.name}\n\n**Temperature**: ${room.actualTemp}\n\nI hope the lights don't work`);
                 } else {
                     session.endDialog(`There are no rooms available for the following.\n\n${notFoundStr}I can look in the next town but you won't like it`);
                 }

@@ -13,6 +13,8 @@ const builder = require('botbuilder');
 const restify = require('restify');
 const fs = require('fs');
 const env = require('node-env-file');
+const dataHandler = require('./data-handler');
+const request = require('request');
 
 env('/marvin/.env');
 
@@ -42,6 +44,8 @@ const LuisModelUrl = process.env.LUIS_MODEL_URL;
 let recognizer = new builder.LuisRecognizer(LuisModelUrl);
 let intents = new builder.IntentDialog({
     recognizers: [recognizer]
+    // intentThreshold: 0.8,
+    // recognizeOrder:  builder.RecognizeOrder.series
 });
 
 // Add intent handlers
@@ -51,12 +55,50 @@ require('./intents/greetings')(intents, builder);
 
 bot.dialog('/', intents);
 
-// intents.onBegin(function (session, args, next) {
-//     builder.Prompts.text(session, "Hello, how can I help?");
-//     next();
+// bot.on('receive', function(data) {
+//     // console.log(data);
+//     if (data.type === 'message' && data.text === 'another') {
+//         let origMessage = data.sourceEvent.Payload.original_message;
+//         let responseUrl = data.sourceEvent.Payload.response_url;
+//         let roomName = data.sourceEvent.Payload.callback_id;
+//         console.log(origMessage);
+//         let respMsg = origMessage;
+//         respMsg.response_type = "ephemeral";
+//         respMsg.replace_original = true;
+//
+//         respMsg.attachments[0].title = "This is a new room";
+//
+//         let filter = {};
+//
+//         dataHandler.getAvailableRooms(filter).then(function(rooms) {
+//             let newRoom;
+//             if (rooms !== undefined && rooms.length > 0) {
+//                 let filteredRooms = rooms.filter((room) => {
+//                     return room.name !== roomName;
+//                 });
+//
+//                 if (filteredRooms.length > 0) {
+//                     newRoom = filteredRooms[0];
+//                 }
+//             }
+//
+//             if (newRoom) {
+//                 request({
+//                     url: responseUrl,
+//                     method: "POST",
+//                     json: respMsg
+//                 }, (error, response, body) => {
+//                     //console.log(response);
+//                 });
+//             }
+//         });
+//
+//     } else {
+//         console.log("Got unknown message");
+//     }
 // });
 
 intents.onDefault(function(session) {
     let randomNumber = Math.floor(Math.random() * doNotUnderstandArray.length);
-    builder.DialogAction.send(doNotUnderstandArray[randomNumber]);
+    session.send(doNotUnderstandArray[randomNumber]);
 });

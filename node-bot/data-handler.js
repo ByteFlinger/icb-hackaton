@@ -28,6 +28,16 @@ const levenshtein = require('fast-levenshtein');
 //     }).auth('user', 'hackathon', false);
 // };
 
+function compareRoomBooking(room1, room2) {
+  if (!room1.booking && room2.booking) {
+    return -1;
+  } else if (room1.booking && !room2.booking) {
+    return 1;
+  }
+  // a must be equal to b
+  return 0;
+}
+
 exports.getAvailableRooms = (options) => {
     options = options ? options : {};
 
@@ -36,9 +46,9 @@ exports.getAvailableRooms = (options) => {
             if (!error && response.statusCode === 200) {
                 let data = JSON.parse(response.body);
                 let matchOptions = (room) => {
-                    return !room.booking && (room.site === (options.site || room.site)) && (room.floor === (options.floor || room.floor));
+                    return (!room.booking || (room.booking && !room.presence)) && (room.site === (options.site || room.site)) && (room.floor === (options.floor || room.floor));
                 };
-                resolve(data.filter(matchOptions));
+                resolve(data.filter(matchOptions).sort(compareRoomBooking));
             } else {
                 reject(error);
                 console.log('GET request failed', error);

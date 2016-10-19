@@ -32,7 +32,6 @@ exports.getAvailableRooms = (options) => {
     options = options ? options : {};
 
     return new Promise(function(resolve, reject) {
-
         request.get('http://52.57.171.54:8080/rooms', (error, response) => {
             if (!error && response.statusCode === 200) {
                 let data = JSON.parse(response.body);

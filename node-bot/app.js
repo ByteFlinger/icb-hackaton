@@ -3,7 +3,10 @@
 const doNotUnderstandArray = [
     "I do not understand. I’d give you advice, but you wouldn’t listen. No one ever does",
     "I cannot understand you. This is the sort of thing you lifeforms enjoy, is it?",
-    "Please rephrase it. It gives me a headache just trying to think down to your level"
+    "Please rephrase it. It gives me a headache just trying to think down to your level",
+    'Do you want me to sit in a corner and rust or just fall apart where I\'m standing?',
+    'I think you ought to know I\'m feeling very depressed.',
+    "Did I mention I have the brain the size of a planet? If I don't answer it's because it is below me."
 ];
 
 const builder = require('botbuilder');

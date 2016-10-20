@@ -156,17 +156,12 @@ module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) 
             let notFoundStr = "";
             let userPreference: UserPreference = session.userData.preference;
 
-            console.log("HELLO1");
-
             if (!userPreference) {
-              console.log("HELLO2");
                 userPreference = new UserPreference();
                 filter.site = requestedRoom.site;
             } else {
-              console.log("HELLO3");
                 let preferedRoom = userPreference.getPreferedRoom(requestedRoom.site);
                 if (preferedRoom) {
-                  console.log("HELLO4");
                     if (preferedRoom.site === requestedRoom.site) {
                         filter.site = preferedRoom.site;
                         notFoundStr += "**Site**: " + filter.site + "\n\n";
@@ -203,8 +198,7 @@ module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) 
                     console.log(rooms);
                     console.log(room);
                     console.log("We found a room");
-                    let msg = chatMessageService.getRoomSuggestionMessage(room);
-                    console.log("The slack message is ", msg);
+                    let msg = chatMessageService.getRoomSuggestionMessage(room, session);
                     session.endDialog(msg);
                     // session.endDialog(`There are rooms available\n\n**Site**: ${room.site}\n\n**Floor**: ${room.floor}\n\n**Name**: ${room.name}\n\n**Temperature**: ${room.actualTemp}\n\nI hope the lights don't work`);
                 } else {

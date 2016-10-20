@@ -4,9 +4,8 @@ import { RoomState } from '../model/room';
 import {ChatMessageService} from "./serviceInterfaces";
 
 export class BFChatMessageService implements ChatMessageService {
-  getRoomSuggestionMessage(room: RoomState): Message {
-    console.log("We are returning a slack message");
-    return new Message()
+  getRoomSuggestionMessage(room: RoomState, session: Session): Message {
+    return new Message(session)
         .sourceEvent({
             slack: SlackChatMessage.getRoomSuggestionMessage(room)
         });

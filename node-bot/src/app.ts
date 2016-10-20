@@ -1,5 +1,3 @@
-import {ChatMessageService} from "./service/serviceInterfaces";
-import { BFChatMessageService } from "./service/bfChatMessageService";
 'use strict';
 
 import { ChatConnector, LuisRecognizer, UniversalBot, IntentDialog } from 'botbuilder';
@@ -8,6 +6,8 @@ import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 import * as dataHandler from './data-handler';
 import * as request from 'request';
+import {ChatMessageService} from "./service/serviceInterfaces";
+import { BFChatMessageService } from "./service/bfChatMessageService";
 
 const doNotUnderstandArray = [
     "I do not understand. I’d give you advice, but you wouldn’t listen. No one ever does",

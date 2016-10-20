@@ -35,7 +35,7 @@ module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) 
                         console.log(roomState);
                         console.log(room);
                         if (!error) {
-                            session.send(chatMessageService.getRoomSuggestionMessage(roomState));
+                            session.send(chatMessageService.getRoomSuggestionMessage(roomState, session));
                             session.send(`I would have booked that room but ${excuse}`);
                         } else {
                             console.log(error);

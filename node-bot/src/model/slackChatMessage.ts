@@ -11,7 +11,6 @@ export class SlackChatMessage implements ChatMessage {
     }
 
     static getRoomSuggestionMessage(room: RoomState): any {
-       console.log("Slack message creation");
         let site = new SlackMessageAttachmentField("Site", room.site);
         let floor = new SlackMessageAttachmentField("Floor", room.floor);
         let temperature = new SlackMessageAttachmentField("Temperature", room.actualTemp.toString());
@@ -19,12 +18,11 @@ export class SlackChatMessage implements ChatMessage {
         let anotherRoomAction = new SlackMessageAttachmentAction("another", "Find another", "button", "another");
         let bookRoomAction = new SlackMessageAttachmentAction("book", "Book it!", "button", "bookit");
 
-
-        console.log("HELLO133");
         let attachment = new SlackMessageAttachment();
         attachment.fallback = `Found a room for you\nSite: ${room.site}\nFloor: ${room.floor}\nName: ${room.name}\nTemperature: ${room.actualTemp}\n\nI hope the lights don't work`;
         attachment.callback_id = room.name;
         attachment.title = room.name;
+        attachment.fields = [site, floor, temperature];
 
         if (room.booking) {
             attachment.color = "warning";
@@ -35,7 +33,6 @@ export class SlackChatMessage implements ChatMessage {
             attachment.text = "Not booked";
             attachment.actions = [anotherRoomAction, bookRoomAction];
         }
-        console.log("HELLO144");
         return new SlackChatMessage("Room availability", [attachment]);
 
     }

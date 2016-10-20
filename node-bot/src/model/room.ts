@@ -1,4 +1,4 @@
-interface Room {
+export class Room {
     id: string;
     name: string;
     locationName?: string;
@@ -7,7 +7,7 @@ interface Room {
     tags?: Array<string>;
 }
 
-interface RoomState extends Room {
+export class RoomState extends Room {
     booking?: boolean;
     actualTemp?: number;
     setTemp?: number;
@@ -16,7 +16,7 @@ interface RoomState extends Room {
     sensorCollectionId?: any;
 }
 
-class RequestedRoom {
+export class RequestedRoom {
     site?: string;
     floor?: string;
     type?: string;
@@ -27,7 +27,7 @@ class RequestedRoom {
     }
 
     static fromRoom(room: Room): RequestedRoom {
-      let rr: RequestedRoom;
+      let rr: RequestedRoom = new RequestedRoom();
       rr.site = room.site;
       rr.name = room.name;
       rr.floor = room.floor;

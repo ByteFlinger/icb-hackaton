@@ -3,6 +3,9 @@
 import { IntentDialog, EntityRecognizer, Prompts, Session, IEntity, Message }  from 'botbuilder';
 import * as dataHandler from '../data-handler';
 import { SlackChatMessage } from '../model/slackChatMessage';
+import { RequestedRoom, Room, RoomState } from '../model/room';
+import { UserPreference } from '../model/userPreference';
+import {ChatMessageService} from "../service/serviceInterfaces";
 
 function getSite(entities: Array<IEntity>): Promise<string> {
     let siteEntity = EntityRecognizer.findEntity(entities, "site");
@@ -126,7 +129,7 @@ module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) 
 
                 let userPreference: UserPreference = session.userData.preference;
 
-                if (requestedRoom.isEmpty() && !userPreference.getPreferedRoom()) {
+                if (requestedRoom.isEmpty() && (!userPreference || !userPreference.getPreferedRoom())) {
                     console.log("Found neither user preference or requested data. Asking user for site");
                     dataHandler.getSites().then(function(sites: Array<any>) {
                         console.log(sites);
@@ -149,16 +152,21 @@ module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) 
                 requestedRoom.site = results.response.entity;
             }
 
-            let filter: RequestedRoom;
+            let filter: RequestedRoom = new RequestedRoom();
             let notFoundStr = "";
             let userPreference: UserPreference = session.userData.preference;
 
+            console.log("HELLO1");
+
             if (!userPreference) {
+              console.log("HELLO2");
                 userPreference = new UserPreference();
                 filter.site = requestedRoom.site;
             } else {
+              console.log("HELLO3");
                 let preferedRoom = userPreference.getPreferedRoom(requestedRoom.site);
                 if (preferedRoom) {
+                  console.log("HELLO4");
                     if (preferedRoom.site === requestedRoom.site) {
                         filter.site = preferedRoom.site;
                         notFoundStr += "**Site**: " + filter.site + "\n\n";
@@ -187,17 +195,17 @@ module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) 
                 }
             }
 
-
-
-
+            console.log("Find room for filter", filter);
 
             dataHandler.getAvailableRooms(filter).then(function(rooms: Array<RoomState>) {
                 if (rooms !== undefined && rooms.length > 0) {
                     let room = rooms[0];
                     console.log(rooms);
                     console.log(room);
-
-                    session.endDialog(chatMessageService.getRoomSuggestionMessage(room));
+                    console.log("We found a room");
+                    let msg = chatMessageService.getRoomSuggestionMessage(room);
+                    console.log("The slack message is ", msg);
+                    session.endDialog(msg);
                     // session.endDialog(`There are rooms available\n\n**Site**: ${room.site}\n\n**Floor**: ${room.floor}\n\n**Name**: ${room.name}\n\n**Temperature**: ${room.actualTemp}\n\nI hope the lights don't work`);
                 } else {
                     session.endDialog(`There are no rooms available for the following.\n\n${notFoundStr}I can look in the next town but you won't like it`);

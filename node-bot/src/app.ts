@@ -1,4 +1,5 @@
-import {BFChatMessageService} from "./service/bfChatMessageService";
+import {ChatMessageService} from "./service/serviceInterfaces";
+import { BFChatMessageService } from "./service/bfChatMessageService";
 'use strict';
 
 import { ChatConnector, LuisRecognizer, UniversalBot, IntentDialog } from 'botbuilder';

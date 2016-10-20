@@ -1,4 +1,6 @@
-class UserPreference {
+import { Room} from '../model/room';
+
+export class UserPreference {
     roomPreference: Map<string, Room>;
 
     public constructor() {

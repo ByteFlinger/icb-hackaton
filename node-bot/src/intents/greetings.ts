@@ -1,6 +1,7 @@
 'use strict';
 
 import { IntentDialog, EntityRecognizer, Prompts, Session }  from 'botbuilder';
+import {ChatMessageService} from "../service/serviceInterfaces";
 
 const greetingsArray = [
     "Hello. Are you staying long? Please say no",

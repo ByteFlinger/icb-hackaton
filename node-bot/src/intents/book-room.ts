@@ -1,5 +1,5 @@
 'use strict';
-
+import {ChatMessageService} from "../service/serviceInterfaces";
 import * as dataHandler from '../data-handler';
 import { IntentDialog, EntityRecognizer, Prompts, Session, Message }  from 'botbuilder';
 

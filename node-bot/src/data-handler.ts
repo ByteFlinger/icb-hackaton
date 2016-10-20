@@ -2,6 +2,7 @@
 
 import * as request from 'request';
 import * as levenshtein from 'fast-levenshtein';
+import { RequestedRoom, Room, RoomState } from './model/room';
 
 /**
  * returns an array of room names

@@ -1,7 +1,7 @@
 'use strict';
 
-const request = require('request');
-const levenshtein = require('fast-levenshtein');
+import * as request from 'request';
+import * as levenshtein from 'fast-levenshtein';
 
 /**
  * returns an array of room names
@@ -28,7 +28,7 @@ const levenshtein = require('fast-levenshtein');
 //     }).auth('user', 'hackathon', false);
 // };
 
-function compareRoomBooking(room1, room2) {
+function compareRoomBooking(room1: RoomState, room2: RoomState) {
   if (!room1.booking && room2.booking) {
     return -1;
   } else if (room1.booking && !room2.booking) {
@@ -38,14 +38,14 @@ function compareRoomBooking(room1, room2) {
   return 0;
 }
 
-exports.getAvailableRooms = (options) => {
-    options = options ? options : {};
+export function getAvailableRooms(options: RequestedRoom): Promise<Array<RoomState>> {
+    options = options ? options : new RequestedRoom();
 
-    return new Promise(function(resolve, reject) {
-        request.get('http://52.57.171.54:8080/rooms', (error, response) => {
+    return new Promise(function(resolve: any, reject: any) {
+        request.get('http://52.57.171.54:8080/rooms', (error, response, body) => {
             if (!error && response.statusCode === 200) {
-                let data = JSON.parse(response.body);
-                let matchOptions = (room) => {
+                let data: Array<RoomState> = JSON.parse(body);
+                let matchOptions = (room: RoomState) => {
                     return (!room.booking || (room.booking && !room.presence)) && (room.site === (options.site || room.site)) && (room.floor === (options.floor || room.floor));
                 };
                 resolve(data.filter(matchOptions).sort(compareRoomBooking));
@@ -67,12 +67,12 @@ exports.getAvailableRooms = (options) => {
   });
  *
  */
-exports.getRoomState = (name, cb) => {
-    request.get('http://52.57.171.54:8080/rooms', (error, response) => {
+export function getRoomState(name: any, cb: any) {
+    request.get('http://52.57.171.54:8080/rooms', (error, response, body) => {
         if (!error && response.statusCode === 200) {
-            let data = JSON.parse(response.body);
+            let data = JSON.parse(body);
             let trigger = false;
-            data.forEach((room) => {
+            data.forEach((room: any) => {
                 if (room.name === name && !trigger) {
                     cb(room);
                     trigger = true;
@@ -99,13 +99,13 @@ exports.getRoomState = (name, cb) => {
 //     }).auth('user', 'hackathon', false);
 // };
 
-exports.getSiteFloorList = (site) => {
+export function getSiteFloorList(site: any) {
     return new Promise(function(resolve, reject) {
-        request.get('http://52.57.171.54:8080/rooms', (error, response) => {
+        request.get('http://52.57.171.54:8080/rooms', (error, response, body) => {
             if (!error && response.statusCode === 200) {
-                let data = JSON.parse(response.body);
-                let results = [];
-                data.forEach((room) => {
+                let data = JSON.parse(body);
+                let results: any = [];
+                data.forEach((room: any) => {
                     if (room.site === site && !results.includes(room.floor)) results.push(room.floor);
                 });
                 resolve(results);
@@ -117,13 +117,13 @@ exports.getSiteFloorList = (site) => {
     });
 };
 
-exports.getRoomNames = (site) => {
+export function getRoomNames(site?: any) {
     return new Promise(function(resolve, reject) {
-        request.get('http://52.57.171.54:8080/rooms', (error, response) => {
+        request.get('http://52.57.171.54:8080/rooms', (error, response, body) => {
             if (!error && response.statusCode === 200) {
-                let data = JSON.parse(response.body);
-                let results = [];
-                data.forEach((room) => {
+                let data = JSON.parse(body);
+                let results: any = [];
+                data.forEach((room: any) => {
                     if (!results.includes(room.name)) results.push(room.name);
                 });
                 resolve(results);
@@ -159,14 +159,14 @@ exports.getRoomNames = (site) => {
 //     }).auth('user', 'hackathon', false);
 // };
 
-exports.getSites = () => {
+export function getSites() : Promise<Array<any>> {
 
     return new Promise(function(resolve, reject) {
-        request.get('http://52.57.171.54:8080/rooms', (error, response) => {
+        request.get('http://52.57.171.54:8080/rooms', (error, response, body) => {
             if (!error && response.statusCode === 200) {
-                let data = JSON.parse(response.body);
-                let results = [];
-                data.forEach((room) => {
+                let data = JSON.parse(body);
+                let results: any = [];
+                data.forEach((room: any) => {
                     if (!results.includes(room.site)) results.push(room.site);
                 });
                 resolve(results);
@@ -176,11 +176,11 @@ exports.getSites = () => {
             }
         }).auth('user', 'hackathon', false);
     });
-};
+}
 
 
-exports.findClosestMatch = function(text, matchArray) {
-    let match;
+export function findClosestMatch(text: string, matchArray: Array<string>) {
+    let match: string;
     let levDistance = 999999;
     console.log(matchArray);
     for (let i = 0; i < matchArray.length; i++) {

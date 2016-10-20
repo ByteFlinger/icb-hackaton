@@ -7,11 +7,13 @@ WORKDIR /usr/src/dist
 
 # Install app dependencies
 COPY package.json /usr/src/dist/
-RUN npm install --production
-COPY app.js /usr/src/dist/
-COPY intents /usr/src/dist/intents
-COPY *.js /usr/src/dist/
-#COPY .env /usr/src/dist/
+RUN npm install \
+    && npm install -g typescript
+COPY tsconfig.json /usr/src/dist/
+COPY src /usr/src/dist/src
+RUN tsc \
+    && npm prune --production
+
 
 
 EXPOSE 443

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "prod": "./node_modules/.bin/forever app.js",
+    "prod": "./node_modules/.bin/forever built/app.js",
     "deploy": "./node_modules/.bin/gulp deploy --host bots"
   },
   "author": "",
@@ -14,14 +14,18 @@
   },
   "description": "A simple bot boilerplate to get started from",
   "dependencies": {
+    "dotenv": "^2.0.0",
     "botbuilder": "^3.3.1",
     "fast-levenshtein": "^2.0.5",
     "forever": "^0.15.2",
-    "node-env-file": "^0.1.8",
     "request": "^2.75.0",
     "restify": "^4.1.1"
   },
   "devDependencies": {
-    "gulp": "^3.9.1"
+    "@types/node": "^6.0.45",
+    "@types/dotenv": "^2.0.18",
+    "@types/request": "^0.0.32",
+    "@types/fast-levenshtein": "^0.0.1",
+    "@types/restify": "^2.0.33"
   }
 }

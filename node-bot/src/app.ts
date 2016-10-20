@@ -1,4 +1,12 @@
+import {BFChatMessageService} from "./service/bfChatMessageService";
 'use strict';
+
+import { ChatConnector, LuisRecognizer, UniversalBot, IntentDialog } from 'botbuilder';
+import * as restify from 'restify';
+import * as fs from 'fs';
+import * as dotenv from 'dotenv';
+import * as dataHandler from './data-handler';
+import * as request from 'request';
 
 const doNotUnderstandArray = [
     "I do not understand. I’d give you advice, but you wouldn’t listen. No one ever does",
@@ -9,23 +17,24 @@ const doNotUnderstandArray = [
     "Did I mention I have the brain the size of a planet? If I don't answer it's because it is below me."
 ];
 
-const builder = require('botbuilder');
-const restify = require('restify');
-const fs = require('fs');
-const env = require('node-env-file');
-const dataHandler = require('./data-handler');
-const request = require('request');
+dotenv.config({
+    silent: true
+});
+//dotenv.config({
+//  silent: true,
+//  path: '../.env'
+//});
 
-env('/marvin/.env');
+let chatMessageService: ChatMessageService = new BFChatMessageService();
 
-const https_options = {
+const https_options: any = {
     key: fs.readFileSync(process.env.SSL_KEY_PATH),
     certificate: fs.readFileSync(process.env.SSL_CERT_PATH)
 };
 
 // Create chat bot
 // let connector = new builder.ConsoleConnector().listen();
-let connector = new builder.ChatConnector({
+let connector = new ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
@@ -36,22 +45,22 @@ https_server.listen(process.env.port || process.env.PORT || 3978, function() {
 });
 https_server.post('/api/messages', connector.listen());
 
-let bot = new builder.UniversalBot(connector);
+let bot = new UniversalBot(connector);
 
 const LuisModelUrl = process.env.LUIS_MODEL_URL;
 
 // Main dialog with LUIS
-let recognizer = new builder.LuisRecognizer(LuisModelUrl);
-let intents = new builder.IntentDialog({
+let recognizer = new LuisRecognizer(LuisModelUrl);
+let intents = new IntentDialog({
     recognizers: [recognizer]
     // intentThreshold: 0.8,
     // recognizeOrder:  builder.RecognizeOrder.series
 });
 
 // Add intent handlers
-require('./intents/book-room')(intents, builder);
-require('./intents/info-available-rooms')(intents, builder);
-require('./intents/greetings')(intents, builder);
+require('./intents/book-room')(intents, chatMessageService);
+require('./intents/info-available-rooms')(intents, chatMessageService);
+require('./intents/greetings')(intents, chatMessageService);
 
 bot.dialog('/', intents);
 
@@ -98,7 +107,7 @@ bot.dialog('/', intents);
 //     }
 // });
 
-intents.onDefault(function(session) {
+intents.onDefault(function(session: any) {
     let randomNumber = Math.floor(Math.random() * doNotUnderstandArray.length);
     session.send(doNotUnderstandArray[randomNumber]);
 });

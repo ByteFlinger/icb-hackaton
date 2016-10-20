@@ -1,5 +1,7 @@
 'use strict';
 
+import { IntentDialog, EntityRecognizer, Prompts, Session }  from 'botbuilder';
+
 const greetingsArray = [
     "Hello. Are you staying long? Please say no",
     "I don't much care for smalltalk",
@@ -10,10 +12,10 @@ const greetingsArray = [
     'Here I am, brain the size of a planet, and they tell me to find you a room. Call that job satisfaction? Cause I don\'t.'
 ];
 
-module.exports = (intent, builder) => {
+module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) => {
 
     intent.matches("smalltalk_greetings", [
-        function(session) {
+        function(session: Session) {
             let randomNumber = Math.floor(Math.random() * greetingsArray.length);
             // Resolve and store any entities passed from LUIS.
             session.send(greetingsArray[randomNumber]);

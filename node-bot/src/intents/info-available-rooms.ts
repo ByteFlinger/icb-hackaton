@@ -1,3 +1,4 @@
+import {UserPreferenceService} from "../service/userPreferenceService";
 'use strict';
 
 import { IntentDialog, EntityRecognizer, Prompts, Session, IEntity, Message }  from 'botbuilder';
@@ -78,7 +79,7 @@ function getRoomType(entities: Array<IEntity>): Promise<string> {
     });
 }
 
-module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) => {
+module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService, userPreferenceService: UserPreferenceService) => {
 
     intent.matches("info_available_rooms", [
         function(session: Session, args: any, next: any) {
@@ -127,9 +128,7 @@ module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) 
 
                 session.dialogData.requestedData = requestedRoom;
 
-                let userPreference: UserPreference = session.userData.preference;
-
-                if (requestedRoom.isEmpty() && (!userPreference || !userPreference.getPreferedRoom())) {
+                if (requestedRoom.isEmpty() && !userPreferenceService.getPreferedRoom(session.userData.preference)) {
                     console.log("Found neither user preference or requested data. Asking user for site");
                     dataHandler.getSites().then(function(sites: Array<any>) {
                         console.log(sites);
@@ -154,13 +153,12 @@ module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) 
 
             let filter: RequestedRoom = new RequestedRoom();
             let notFoundStr = "";
-            let userPreference: UserPreference = session.userData.preference;
 
-            if (!userPreference) {
-                userPreference = new UserPreference();
+            if (!session.userData.preference) {
                 filter.site = requestedRoom.site;
+                //userPreference = new UserPreference();
             } else {
-                let preferedRoom = userPreference.getPreferedRoom(requestedRoom.site);
+                let preferedRoom = userPreferenceService.getPreferedRoom(session.userData.preference);
                 if (preferedRoom) {
                     if (preferedRoom.site === requestedRoom.site) {
                         filter.site = preferedRoom.site;
@@ -198,6 +196,7 @@ module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) 
                     console.log(rooms);
                     console.log(room);
                     console.log("We found a room");
+                    session.privateConversationData.last = {"room": room};
                     let msg = chatMessageService.getRoomSuggestionMessage(room, session);
                     session.endDialog(msg);
                     // session.endDialog(`There are rooms available\n\n**Site**: ${room.site}\n\n**Floor**: ${room.floor}\n\n**Name**: ${room.name}\n\n**Temperature**: ${room.actualTemp}\n\nI hope the lights don't work`);

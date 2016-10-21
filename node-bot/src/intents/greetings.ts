@@ -1,3 +1,4 @@
+import {UserPreferenceService} from "../service/userPreferenceService";
 'use strict';
 
 import { IntentDialog, EntityRecognizer, Prompts, Session }  from 'botbuilder';
@@ -13,7 +14,7 @@ const greetingsArray = [
     'Here I am, brain the size of a planet, and they tell me to find you a room. Call that job satisfaction? Cause I don\'t.'
 ];
 
-module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) => {
+module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService, userPreferenceService: UserPreferenceService) => {
 
     intent.matches("smalltalk_greetings", [
         function(session: Session) {

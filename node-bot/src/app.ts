@@ -1,3 +1,5 @@
+import {UserPreferenceService} from "./service/userPreferenceService";
+import {UserPreference} from "./model/userPreference";
 'use strict';
 
 import { ChatConnector, LuisRecognizer, UniversalBot, IntentDialog } from 'botbuilder';
@@ -27,6 +29,7 @@ dotenv.config({
 //});
 
 let chatMessageService: ChatMessageService = new BFChatMessageService();
+let userPreferenceService: UserPreferenceService = new UserPreferenceService();
 
 const https_options: any = {
     key: fs.readFileSync(process.env.SSL_KEY_PATH),
@@ -58,10 +61,45 @@ let intents = new IntentDialog({
     // recognizeOrder:  builder.RecognizeOrder.series
 });
 
+bot.beginDialogAction('bookRoom', '/bookRoom', { matches: /^bookRoom/i });
+bot.beginDialogAction('setPreferedRoom', '/setPreferedRoom', { matches: /^setPreferedRoom/i });
+bot.beginDialogAction('findAnotherRoom', '/findAnotherRoom', { matches: /^findAnotherRoom/i });
+
+bot.dialog('/bookRoom', [
+    function(session) {
+        session.endDialog("You'd think they'd allow someone with my brain capacity to perform a single task such as booking a room but no. They probably forgot about me");
+    }
+]);
+
+bot.dialog('/findAnotherRoom', [
+    function(session) {
+        session.endDialog("No, I don't feel like doing that today. Try tomorrow but don't expect much");
+    }
+]);
+
+bot.dialog('/setPreferedRoom', [
+    function(session) {
+        console.log("Preference before", session.userData.preference);
+        let lastRoom = session.privateConversationData.last.room;
+        if (lastRoom) {
+           if(!session.userData.preference) {
+             session.userData.preference = new UserPreference();
+           }
+
+            userPreferenceService.setPreferedRoom(session.userData.preference,lastRoom);
+            console.log(session.userData.preference);
+            session.endDialog("It is done :robot_face:. The system will probably forget about it though");
+        } else {
+          session.endDialog("Sorry I cannot do that");
+        }
+
+    }
+]);
+
 // Add intent handlers
-require('./intents/book-room')(intents, chatMessageService);
-require('./intents/info-available-rooms')(intents, chatMessageService);
-require('./intents/greetings')(intents, chatMessageService);
+require('./intents/book-room')(intents, chatMessageService, userPreferenceService);
+require('./intents/info-available-rooms')(intents, chatMessageService, userPreferenceService);
+require('./intents/greetings')(intents, chatMessageService, userPreferenceService);
 
 bot.dialog('/', intents);
 

@@ -1,4 +1,6 @@
 'use strict';
+
+import {UserPreferenceService} from "../service/userPreferenceService";
 import {ChatMessageService} from "../service/serviceInterfaces";
 import * as dataHandler from '../data-handler';
 import { IntentDialog, EntityRecognizer, Prompts, Session, Message }  from 'botbuilder';
@@ -11,7 +13,7 @@ const excuses = [
     "here I am, brain the size of a planet :robot_face: and they won't even let me book a room"
 ];
 
-module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService) => {
+module.exports = (intent: IntentDialog, chatMessageService: ChatMessageService, userPreferenceService: UserPreferenceService) => {
 
   intent.matches("book_room", [
     function(session: Session, args: any, next: any) {

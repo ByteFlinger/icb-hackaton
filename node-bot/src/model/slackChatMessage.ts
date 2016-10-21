@@ -15,8 +15,9 @@ export class SlackChatMessage implements ChatMessage {
         let floor = new SlackMessageAttachmentField("Floor", room.floor);
         let temperature = new SlackMessageAttachmentField("Temperature", room.actualTemp.toString());
 
-        let anotherRoomAction = new SlackMessageAttachmentAction("another", "Find another", "button", "another");
-        let bookRoomAction = new SlackMessageAttachmentAction("book", "Book it!", "button", "bookit");
+        let anotherRoomAction = new SlackMessageAttachmentAction("another", "Find another", "button", "findAnotherRoom");
+        let bookRoomAction = new SlackMessageAttachmentAction("book", "Book it!", "button", "bookRoom");
+        let SetPreferedForSiteAction = new SlackMessageAttachmentAction("prefered", "Set as prefered", "button", "setPreferedRoom");
 
         let attachment = new SlackMessageAttachment();
         attachment.fallback = `Found a room for you\nSite: ${room.site}\nFloor: ${room.floor}\nName: ${room.name}\nTemperature: ${room.actualTemp}\n\nI hope the lights don't work`;
@@ -27,11 +28,11 @@ export class SlackChatMessage implements ChatMessage {
         if (room.booking) {
             attachment.color = "warning";
             attachment.text = "Booked but empty at the moment";
-            attachment.actions = [anotherRoomAction];
+            attachment.actions = [anotherRoomAction, SetPreferedForSiteAction];
         } else {
             attachment.color = "good";
             attachment.text = "Not booked";
-            attachment.actions = [anotherRoomAction, bookRoomAction];
+            attachment.actions = [anotherRoomAction, bookRoomAction, SetPreferedForSiteAction];
         }
         return new SlackChatMessage("Room availability", [attachment]);
 
